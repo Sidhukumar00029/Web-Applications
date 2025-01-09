@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Car Rental System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Car Rental System</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/cars">Available Cars</a></li>
+                <li><a href="/rentals">My Rentals</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Welcome to Car Rental System</h1>
+            <p>Find your perfect ride today</p>
+        </section>
+
+        <section class="available-cars">
+            <h2>Available Cars</h2>
+            <div class="car-grid" th:if="${cars != null and !cars.empty}">
+                <div th:each="car : ${cars}" class="car-card">
+                    <h3 th:text="${car.brand + ' ' + car.model}">Car Name</h3>
+                    <p th:text="${'Category: ' + car.category}">Category</p>
+                    <p th:text="${'Price per day: $' + #numbers.formatDecimal(car.basePricePerDay, 1, 2)}">Price</p>
+                    <a th:if="${car.available}" th:href="@{/rent/{id}(id=${car.carId})}" class="btn">Rent Now</a>
+                    <span th:unless="${car.available}" class="unavailable">Currently Rented</span>
+                </div>
+            </div>
+            <div th:if="${cars == null or cars.empty}" class="no-cars">
+                <p>No cars available at the moment.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Car Rental System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Rentals - Car Rental System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Car Rental System</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/cars">Available Cars</a></li>
+                <li><a href="/rentals">My Rentals</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="rentals">
+            <h2>My Rentals</h2>
+            <div class="rental-list" th:if="${rentals != null and !rentals.empty}">
+                <div th:each="rental : ${rentals}" class="rental-card">
+                    <h3 th:text="${rental.car.brand + ' ' + rental.car.model}">Car Name</h3>
+                    <p th:text="${'Customer: ' + rental.customer.name}">Customer Name</p>
+                    <p th:text="${'Duration: ' + rental.days + ' days'}">Duration</p>
+                    <p th:text="${'Total Cost: $' + #numbers.formatDecimal(rental.car.basePricePerDay * rental.days, 1, 2)}">Total Cost</p>
+                    <form th:action="@{/return}" method="post" style="margin-top: 1rem;">
+                        <input type="hidden" name="carId" th:value="${rental.car.carId}">
+                        <button type="submit" class="btn btn-return">Return Car</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${rentals == null or rentals.empty}" class="no-rentals">
+                <p>You don't have any active rentals.</p>
+                <a href="/cars" class="btn">Rent a Car</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Car Rental System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

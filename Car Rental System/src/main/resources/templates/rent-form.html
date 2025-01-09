@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Rent a Car</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Car Rental System</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/cars">Available Cars</a></li>
+                <li><a href="/rentals">My Rentals</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="rent-form">
+            <h2>Rent a Car</h2>
+            <div class="car-details" th:if="${car != null}">
+                <h3 th:text="${car.brand + ' ' + car.model}">Car Name</h3>
+                <p th:text="${'Category: ' + car.category}">Category</p>
+                <p>Base Price per day: $<span id="basePrice" th:text="${#numbers.formatDecimal(car.basePricePerDay, 1, 2)}" th:attr="data-price=${car.basePricePerDay}">0.00</span></p>
+                
+                <form action="/rent" method="post">
+                    <input type="hidden" name="carId" th:value="${car.carId}">
+                    
+                    <div class="form-group">
+                        <label for="customerName">Your Name:</label>
+                        <input type="text" id="customerName" name="customerName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="days">Number of Days:</label>
+                        <input type="number" id="days" name="days" min="1" required oninput="calculateTotalCost()">
+                    </div>
+
+                    <div class="cost-summary">
+                        <div class="cost-breakdown">
+                            <p>Base Price: $<span id="baseCostDisplay">0.00</span></p>
+                            <p>Number of Days: <span id="daysDisplay">0</span></p>
+                            <p class="total-cost">Total Cost: $<span id="totalCostDisplay">0.00</span></p>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">Confirm Rental</button>
+                </form>
+            </div>
+            
+            <div class="error-message" th:if="${car == null}">
+                <p>Sorry, the selected car is not available.</p>
+                <a href="/cars" class="btn">View Available Cars</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Car Rental System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function calculateTotalCost() {
+            const basePrice = parseFloat(document.getElementById('basePrice').getAttribute('data-price'));
+            const days = parseInt(document.getElementById('days').value) || 0;
+            
+            const totalCost = basePrice * days;
+            
+            // Update the display
+            document.getElementById('baseCostDisplay').textContent = basePrice.toFixed(2);
+            document.getElementById('daysDisplay').textContent = days;
+            document.getElementById('totalCostDisplay').textContent = totalCost.toFixed(2);
+        }
+
+        // Calculate initial cost
+        calculateTotalCost();
+    </script>
+</body>
+</html>
